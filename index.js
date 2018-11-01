@@ -1,15 +1,18 @@
 const blessed = require('blessed');
+const fs = require('fs');
+const Editor = require('editor-widget');
 const size = process.stdout.getWindowSize();
 
 const screen = blessed.screen({
   smartCSR: true,
-  debug: true
+  // debug: true
 });
+
 
 screen.title = 'my window title';
 
 const snippets = require('./snippets.json')
-  .slice(0, 5);
+.slice(0, 5);
 
 let selectedIndex = 0;
 let currentPage = 1;
@@ -18,11 +21,19 @@ const pageSize = size[1]/5;
 const totalPages = Math.ceil(snippets.length / pageSize);
 const firstItemIndex = 0;
 
+const editor = new Editor({
+  parent: screen,
+  top: 0,
+  left: '20%',
+  width: '80%',
+  height: '100%'
+});
+
 const menu = blessed.listbar({
   parent: screen,
   top: size[1] - 1,
   left: '0',
-  width: '100%',
+  width: '20%',
   style: {
     fg: 'white'
   },
@@ -39,7 +50,7 @@ function renderPageFactory(snippets) {
       parent: screen,
       top: '0',
       left: '0',
-      width: '100%',
+      width: '20%',
       height: size[1] - 1,
       style: {
         fg: 'white'
@@ -119,4 +130,23 @@ screen.key(['down'], function(ch, key) {
   screen.render();
 });
 
+screen.key(['enter'], function () {
+  if (!editor.focused) {
+    fs.writeFileSync('./tmp', snippets[0].content, {
+      encoding: 'utf8'
+    })
+    editor.open('./tmp');
+    screen.key(['C-s'], (ch, key) => { editor.save(filePath); });
+
+    editor.focus();
+  }
+})
+
+screen.key(['escape'], function() {
+  if (editor.focused) {
+    menu.focus();
+  }
+})
+
+menu.focus();
 screen.render();

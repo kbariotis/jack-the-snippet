@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "blessed": "git+https://github.com/blessed-ng/blessed.git",
+    "blessed": "^0.1.81",
+    "editor-widget": "^1.1.1",
     "term-list": "^0.2.1"
   }
 }
