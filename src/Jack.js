@@ -12,7 +12,7 @@ class Jack {
       smartCSR: true,
       width: size[0],
       height: size[1],
-      // debug: true
+      debug: true
     });
 
     this.snippets = require('./../snippets.json')
@@ -20,9 +20,9 @@ class Jack {
 
     this.list = new List({
       parent: this.screen,
-      top: size[1] - 1,
       snippets: this.snippets
     })
+    this.list.focus();
 
     this.editor = new Editor({
       parent: this.screen,
@@ -39,16 +39,25 @@ class Jack {
     this.screen.render();
 
     this.screen.key(['q', 'C-c'], this.handleExit)
-
-    this.screen.key(['up'], (ch, key) => this.list.pageUp(ch, key));
-
-    this.screen.key(['down'], (ch, key) => this.list.keyDown(ch, key));
-
-    this.screen.key(['enter'], (ch, key) => this.handleEnter(ch, key))
-    this.screen.key(['escape'], (ch, key) => this.handleEscape(ch, key))
+    this.screen.key(['up'], (ch, key) => this.handleKeyUp());
+    this.screen.key(['down'], (ch, key) => this.handleKeyDown());
+    this.screen.key(['enter'], (ch, key) => this.handleEnter())
+    this.screen.key(['escape'], (ch, key) => this.handleEscape())
   }
 
-  handleEnter(ch, key) {
+  handleKeyDown() {
+    if(this.list.focused) {
+      this.list.down()
+    }
+  }
+
+  handleKeyUp() {
+    if(this.list.focused) {
+      this.list.up()
+    }
+  }
+
+  handleEnter() {
     if (this.list.focused) {
       fs.writeFileSync('./tmp', this.snippets[0].content, {
         encoding: 'utf8'
@@ -56,12 +65,12 @@ class Jack {
       this.editor.open('./tmp');
       this.editor.show();
       this.editor.focus();
-      this.screen.key(['C-s'], (ch, key) => { editor.save(filePath); });
+      this.screen.key(['C-s'], () => { editor.save(filePath); });
       this.screen.render();
     }
   }
 
-  handleEscape(ch, key) {
+  handleEscape() {
     if (this.editor.focused) {
       this.list.focus();
       this.editor.hide();
@@ -69,7 +78,7 @@ class Jack {
     }
   }
 
-  handleExit(ch, key) {
+  handleExit() {
     process.exit(0);
   }
 }

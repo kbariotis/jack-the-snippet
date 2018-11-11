@@ -5,7 +5,7 @@ class ListItem extends Box {
   constructor(opts) {
     super(Object.assign({}, opts, {
       left: '0',
-      width: '100%',
+      width: '20%',
       shrink: true,
       border: {
         type: 'line'

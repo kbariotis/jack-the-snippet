@@ -43,7 +43,7 @@ class List extends Box {
     this.parent.screen.render();
   }
 
-  keyDown(ch, key) {
+  down(ch, key) {
     const lastItemIndex = (this.snippets.length - 1)
 
     if (this.selectedIndex === lastItemIndex) {
@@ -62,7 +62,7 @@ class List extends Box {
     this.parent.screen.render();
   }
 
-  pageUp(ch, key) {
+  up(ch, key) {
     if (this.selectedIndex === this.firstItemIndex) {
       this.currentPage = this.currentPage === 1 ? this.totalPages : --this.currentPage;
       this.renderPage(this.currentPage);
